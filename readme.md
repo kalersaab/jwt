@@ -21,6 +21,7 @@ Tokens produced by this library can be verified on [jwt.io](https://jwt.io), and
 
 ```
 jwt/
+├──include/
 ├── jwt/
 │   ├── types.hpp    — JsonValue, Claims, DecodedToken, error types
 │   ├── base64.hpp   — base64url encode / decode

@@ -1,5 +1,5 @@
 #include <iostream>
-#include "jwt.hpp"
+#include "include/jwt.hpp"
 
 int main() {
 
@@ -36,7 +36,7 @@ int main() {
 
     std::cout << "\n=== Tampered secret (should fail) ===\n";
     try {
-        jwt::decode(token, "wrong-secret", false);
+        jwt::decode(token, secret, false);
         std::cout << "Verification passed (unexpected)\n";
     } catch (const jwt::SignatureError& e) {
         std::cout << "Caught expected error: " << e.what() << "\n";
