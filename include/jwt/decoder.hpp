@@ -73,6 +73,10 @@ inline DecodedToken decode(std::string_view token,
         if (!detail::verify_hs256(signing_input, secret, sig_bytes))
             throw SignatureError("HS256 signature verification failed");
 
+    } else if (result.alg == "HS384") {
+        if (!detail::verify_hs384(signing_input, secret, sig_bytes))
+            throw SignatureError("HS384 signature verification failed");
+
     } else if (result.alg == "RS256") {
         if (!detail::verify_rs256(signing_input, secret, sig_bytes))
             throw SignatureError("RS256 signature verification failed");
