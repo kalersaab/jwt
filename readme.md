@@ -9,6 +9,7 @@ Tokens produced by this library can be verified on [jwt.io](https://jwt.io), and
 ## Features
 
 - **HS256** — HMAC-SHA256 signing and verification
+- **HS384** — HMAC-SHA384 signing and verification
 - **RS256** — RSA-SHA256 signature verification (PEM public key)
 - **Decode** any JWT and access claims by key
 - **Expiry check** — automatic `exp` claim validation
@@ -26,8 +27,8 @@ jwt/
 │   ├── types.hpp    — JsonValue, Claims, DecodedToken, error types
 │   ├── base64.hpp   — base64url encode / decode
 │   ├── json.hpp     — minimal flat JSON object parser
-│   ├── crypto.hpp   — HMAC-SHA256 and RSA-SHA256 verification
-│   ├── encoder.hpp  — jwt::encode_hs256()
+│   ├── crypto.hpp   — HMAC-SHA256/SHA384 and RSA-SHA256 verification
+│   ├── encoder.hpp  — jwt::encode_hs256(), jwt::encode_hs384()
 │   └── decoder.hpp  — jwt::decode()
 ├── jwt.hpp          — single umbrella include
 └── main.cpp         — usage example
@@ -81,6 +82,16 @@ std::string token = jwt::encode_hs256(claims, "your-secret");
 ```
 
 > Prefix numeric/boolean values with `~` so they are emitted as raw JSON values rather than quoted strings — this keeps the token fully compatible with jwt.io.
+
+---
+
+### Encode a HS384 token
+
+```cpp
+std::string token = jwt::encode_hs384(claims, "your-secret");
+```
+
+The `decode()` function detects the algorithm from the token header automatically — no extra parameter needed.
 
 ---
 
@@ -149,7 +160,7 @@ All derive from `jwt::JwtError` → `std::runtime_error`.
 
 ```cpp
 struct DecodedToken {
-    std::string alg;     // Algorithm — "HS256" or "RS256"
+    std::string alg;     // Algorithm — "HS256", "HS384", or "RS256"
     std::string typ;     // Type — "JWT"
     std::string kid;     // Key ID (if present)
     Claims      payload; // All claims as a map

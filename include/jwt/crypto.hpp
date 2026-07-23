@@ -72,4 +72,38 @@ inline std::vector<unsigned char> hmac_sha256(std::string_view data,
     return std::vector<unsigned char>(digest, digest + digest_len);
 }
 
+inline bool verify_hs384(std::string_view                  signing_input,
+                          std::string_view                  secret,
+                          const std::vector<unsigned char>& sig) {
+    unsigned char digest[EVP_MAX_MD_SIZE];
+    unsigned int  digest_len = 0;
+
+    HMAC(EVP_sha384(),
+         secret.data(),       static_cast<int>(secret.size()),
+         reinterpret_cast<const unsigned char*>(signing_input.data()),
+         signing_input.size(),
+         digest, &digest_len);
+
+    if (digest_len != sig.size()) return false;
+
+    unsigned char diff = 0;
+    for (size_t i = 0; i < digest_len; ++i)
+        diff |= digest[i] ^ sig[i];
+    return diff == 0;
 }
+
+inline std::vector<unsigned char> hmac_sha384(std::string_view data,
+                                               std::string_view key) {
+    unsigned char digest[EVP_MAX_MD_SIZE];
+    unsigned int  digest_len = 0;
+
+    HMAC(EVP_sha384(),
+         key.data(),  static_cast<int>(key.size()),
+         reinterpret_cast<const unsigned char*>(data.data()),
+         data.size(),
+         digest, &digest_len);
+
+    return std::vector<unsigned char>(digest, digest + digest_len);
+}
+
+} // namespace jwt::detail

@@ -36,10 +36,29 @@ int main() {
 
     std::cout << "\n=== Tampered secret (should fail) ===\n";
     try {
-        jwt::decode(token, secret, false);
+        jwt::decode(token, "wrong-secret", false);
         std::cout << "Verification passed (unexpected)\n";
     } catch (const jwt::SignatureError& e) {
         std::cout << "Caught expected error: " << e.what() << "\n";
+    }
+
+    std::cout << "\n=== HS384 Encoded JWT ===\n";
+    std::string token384 = jwt::encode_hs384(claims, secret);
+    std::cout << token384 << "\n\n";
+
+    try {
+        auto decoded384 = jwt::decode(token384, secret, false);
+
+        std::cout << "=== HS384 Decoded JWT ===\n";
+        std::cout << "Algorithm : " << decoded384.alg << "\n";
+        std::cout << "Subject   : " << decoded384.subject() << "\n";
+
+        std::cout << "\n--- All claims ---\n";
+        for (auto& [key, val] : decoded384.payload)
+            std::cout << "  " << key << " = " << val.to_string() << "\n";
+
+    } catch (const jwt::JwtError& e) {
+        std::cerr << "JWT error: " << e.what() << "\n";
     }
 
     return 0;
